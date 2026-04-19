@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>VitalRx — Clinical Decision Support</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:#0A0F1E;color:#F1F5F9;-webkit-font-smoothing:antialiased;}
+
+/* ── NAV ── */
+.nav{background:#080F1C;padding:13px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;border-bottom:1px solid rgba(129,140,248,.12);}
+.nav-brand{display:flex;align-items:center;gap:10px;}
+.nav-mark{width:30px;height:30px;background:#818cf8;border-radius:7px;display:grid;place-items:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;}
+.nav-name{font-size:15px;font-weight:800;color:#fff;}
+.nav-sub{font-size:9.5px;color:rgba(255,255,255,.55);display:block;margin-top:-1px;}
+.nav-right{display:flex;align-items:center;gap:10px;}
+.nav-user{font-size:11px;color:rgba(255,255,255,.45);padding-right:8px;border-right:1px solid rgba(255,255,255,.12);}
+.nav-link{font-size:12px;font-weight:600;color:#9CA3AF;background:none;border:none;cursor:default;font-family:'Inter',sans-serif;}
+.nav-link:hover{color:#fff;}
+.nav-back{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:5px;color:rgba(255,255,255,.7);font-size:12px;font-weight:600;padding:5px 11px;cursor:default;font-family:'Inter',sans-serif;display:flex;align-items:center;gap:3px;}
+.nav-back::before{content:'‹';font-size:15px;line-height:1;}
+
+/* ── HERO ── */
+.hero{background:linear-gradient(160deg,#0B1F3A 0%,#152d4a 100%);padding:30px 20px 28px;border-bottom:3px solid #3A6EA5;}
+.hero-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:#818cf8;margin-bottom:10px;}
+.hero-title{font-size:30px;font-weight:800;color:#fff;line-height:1.1;letter-spacing:-.5px;margin-bottom:8px;}
+.hero-title em{font-family:'DM Serif Display',serif;font-style:italic;color:#7FB3E0;}
+.hero-sub{font-size:14px;font-weight:600;color:rgba(255,255,255,.75);margin-bottom:5px;}
+.hero-line{font-size:12.5px;color:rgba(255,255,255,.4);line-height:1.5;}
+
+/* ── SECTIONS ── */
+.section{padding:22px 18px;border-bottom:1px solid rgba(255,255,255,.05);}
+.section:last-child{border-bottom:none;}
+.section-hdr{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:#818cf8;margin-bottom:14px;}
+
+/* ── VALUE BULLETS ── */
+.value-list{list-style:none;display:flex;flex-direction:column;gap:11px;}
+.value-list li{font-size:15px;color:#ffffff;display:flex;align-items:flex-start;gap:10px;line-height:1.5;}
+.value-list li::before{content:'✔';color:#818cf8;font-weight:800;font-size:14px;flex-shrink:0;margin-top:1px;}
+
+/* ── SPECIALTY GRID ── */
+.spec-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.spec-item{background:#1C2338;border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:13px 13px;font-size:13px;font-weight:600;color:#ffffff;line-height:1.4;}
+.spec-item.inpatient{border-left:3px solid #818cf8;background:#1a1f35;}
+
+/* ── AUTHORITY ── */
+.authority-card{background:#141929;border-radius:11px;border:1px solid rgba(255,255,255,.08);padding:18px 20px;}
+.authority-title{font-size:15px;font-weight:800;color:#ffffff;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.authority-title::before{content:'';display:inline-block;width:3px;height:16px;background:#818cf8;border-radius:2px;flex-shrink:0;}
+.authority-list{list-style:none;display:flex;flex-direction:column;gap:10px;}
+.authority-list li{font-size:14px;color:#ffffff;display:flex;align-items:flex-start;gap:10px;line-height:1.5;}
+.authority-list li::before{content:'✔';color:#818cf8;font-weight:800;font-size:13px;flex-shrink:0;margin-top:2px;}
+
+/* ── PRICING ── */
+.pricing-wrap{display:flex;flex-direction:column;gap:10px;margin-bottom:14px;}
+.plan{background:#0D1220;border:1.5px solid rgba(255,255,255,.15);border-radius:10px;padding:16px;display:flex;align-items:center;justify-content:space-between;cursor:default;transition:all .15s;-webkit-tap-highlight-color:transparent;}
+.plan:active{transform:scale(.98);}
+.plan.selected{border-color:#818cf8;background:rgba(129,140,248,.12);}
+.plan.featured{border-color:rgba(129,140,248,.4);}
+.plan-name{font-size:15px;font-weight:800;color:#ffffff;}
+.plan-desc{font-size:12px;color:rgba(255,255,255,.6);margin-top:2px;}
+.plan-save{font-size:11px;font-weight:700;color:#34d399;margin-top:3px;}
+.plan-price{font-size:24px;font-weight:900;color:#ffffff;letter-spacing:-.5px;}
+.plan-per{font-size:11px;color:rgba(255,255,255,.55);}
+.plan-badge{background:#818cf8;color:#fff;font-size:9px;font-weight:800;padding:3px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.4px;margin-top:4px;display:inline-block;}
+.plan-check{width:22px;height:22px;border:2px solid #DDE1E7;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:12px;transition:all .15s;}
+
+.cta-btn{width:100%;padding:16px;background:#818cf8;color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:800;font-family:'Inter',sans-serif;cursor:default;margin-top:4px;}
+.cta-btn:active{transform:scale(.98);background:#6d5fd0;}
+.cta-note{font-size:11.5px;color:rgba(255,255,255,.35);text-align:center;margin-top:10px;line-height:1.6;}
+.fine-print{font-size:11.5px;color:rgba(255,255,255,.38);text-align:center;margin-top:10px;line-height:1.6;}
+
+/* ── MANAGE ── */
+.manage-card{background:#fff;border-radius:10px;border:1px solid #DDE1E7;padding:16px;}
+.manage-title{font-size:13px;font-weight:700;color:#f1f5f9;margin-bottom:4px;}
+.manage-desc{font-size:12px;color:rgba(255,255,255,.4);margin-bottom:12px;line-height:1.5;}
+.manage-btn{width:100%;padding:12px;background:rgba(129,140,248,.1);color:#818cf8;border:1.5px solid rgba(129,140,248,.25);border-radius:8px;font-size:13px;font-weight:700;font-family:'Inter',sans-serif;cursor:default;}
+
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(11,31,58,.8);z-index:500;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:#141929;border-radius:12px;width:100%;max-width:400px;overflow:hidden;border:1px solid rgba(255,255,255,.1);}
+.modal-hdr{background:#080F1C;padding:16px 18px;}
+.modal-hdr-title{font-size:15px;font-weight:800;color:#fff;}
+.modal-hdr-sub{font-size:11px;color:rgba(255,255,255,.4);margin-top:2px;}
+.modal-body{padding:18px;background:#141929;}
+.modal-disc{background:#FEF9C3;border:1px solid #FCD34D;border-radius:7px;padding:14px;margin-bottom:16px;}
+.modal-disc-lbl{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:#92400E;margin-bottom:6px;}
+.modal-disc-text{font-size:13px;color:rgba(255,255,255,.8);line-height:1.7;}
+.modal-disc-text strong{color:#ffffff;}
+.modal-btns{display:flex;flex-direction:column;gap:8px;}
+.modal-keep{width:100%;padding:13px;background:#818cf8;color:#fff;border:none;border-radius:7px;font-size:14px;font-weight:800;font-family:'Inter',sans-serif;cursor:default;}
+.modal-cancel{width:100%;padding:13px;background:#fff;color:#B91C1C;border:1.5px solid #FECACA;border-radius:7px;font-size:13px;font-weight:700;font-family:'Inter',sans-serif;cursor:default;}
+
+@media(min-width:480px){
+  .hero{padding:36px 28px 32px;}
+  .hero-title{font-size:34px;}
+  .section{padding:24px 28px;}
+}
+
+/* ── HERO FEATURE ── */
+.hero-feature{
+  background:linear-gradient(135deg,rgba(129,140,248,.18) 0%,rgba(129,140,248,.05) 100%);
+  border:1.5px solid rgba(129,140,248,.35);
+  border-radius:12px;
+  padding:20px 18px;
+  margin-bottom:20px;
+  display:flex;align-items:flex-start;gap:14px;
+}
+.hero-feature-icon{
+  font-size:26px;flex-shrink:0;
+  background:rgba(129,140,248,.15);
+  border-radius:10px;
+  width:50px;height:50px;
+  display:grid;place-items:center;
+}
+.hero-feature-title{
+  font-size:17px;font-weight:800;
+  color:#ffffff;letter-spacing:-.2px;
+  margin-bottom:8px;line-height:1.2;
+}
+.hero-feature-desc{
+  font-size:13.5px;font-weight:400;
+  color:rgba(255,255,255,.75);
+  line-height:1.75;
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-brand">
+    <div class="nav-mark">Rx</div>
+    <div>
+      <div class="nav-name">VitalRx</div>
+      <span class="nav-sub">Clinical Decision Support</span>
+    </div>
+  </div>
+  <div class="nav-right">
+    <span class="nav-user" id="navUser"></span>
+    <button class="nav-link" onclick="openModal()">Manage Subscription</button>
+    <button class="nav-link" onclick="signOut()">Sign Out</button>
+    <button class="nav-back" onclick="goBack()">Back</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">Clinical Reference — 2026</div>
+  <div class="hero-title">The Essential Rotation Guide for the <em>Modern Clinician</em></div>
+  <div class="hero-sub">2026 board-standard protocols and decision support for residents, fellows, and students across all medical specialties.</div>
+</div>
+
+<!-- HERO FEATURE -->
+<div class="section" style="border-bottom:none;padding-bottom:0;">
+  <div class="hero-feature">
+    <div class="hero-feature-icon">⚡</div>
+    <div>
+      <div class="hero-feature-title">Instant Differential Diagnosis Search</div>
+      <div class="hero-feature-desc">Type any symptom, complaint, age, or gender in plain language. VitalRx instantly ranks your differentials — High Risk conditions flagged first, step-by-step treatment protocols one tap away. Built for the speed of real clinical practice.</div>
+    </div>
+  </div>
+</div>
+
+<!-- VALUE BULLETS -->
+<div class="section">
+  <div class="section-hdr">What You Get</div>
+  <ul class="value-list">
+    <li>Step-by-step treatment plans at point of care</li>
+    <li>Symptom → Diagnosis → Treatment → Discharge</li>
+    <li>IV and PO medication guidance with dosing</li>
+    <li>Labs, imaging, and clinical next steps</li>
+    <li>Built for real clinical workflow — not textbooks</li>
+    <li>Switch seamlessly between specialties at any time — all in one app</li>
+  </ul>
+</div>
+
+<!-- SPECIALTY GRID -->
+<div class="section">
+  <div class="section-hdr">What's Included — All 19 Specialties</div>
+  <div class="spec-grid">
+    <div class="spec-item">Cardiology</div>
+    <div class="spec-item">Women's Health / OBGYN</div>
+    <div class="spec-item">Pulmonary</div>
+    <div class="spec-item">Urology</div>
+    <div class="spec-item">Gastroenterology</div>
+    <div class="spec-item">Dermatology</div>
+    <div class="spec-item">Endocrinology</div>
+    <div class="spec-item">Orthopedics / Rheumatology</div>
+    <div class="spec-item">Neurology</div>
+    <div class="spec-item">Nephrology</div>
+    <div class="spec-item">Psychiatry</div>
+    <div class="spec-item">Infectious Disease</div>
+    <div class="spec-item">Pediatrics</div>
+    <div class="spec-item">Family Medicine</div>
+    <div class="spec-item">Urgent Care</div>
+    <div class="spec-item">Geriatrics</div>
+    <div class="spec-item">Pain Management</div>
+    <div class="spec-item inpatient">Hospitalist / Acute Care<br><span style="font-size:11px;font-weight:500;color:#818cf8;">Inpatient · IV · Drips</span></div>
+    <div class="spec-item inpatient">Palliative Care<br><span style="font-size:11px;font-weight:500;color:#818cf8;">Inpatient and Outpatient</span></div>
+  </div>
+</div>
+
+<!-- AUTHORITY -->
+<div class="section">
+  <div class="authority-card">
+    <div class="authority-title">Evidence-Based Clinical Pathways — 2026 Guidelines</div>
+    <ul class="authority-list">
+      <li>Structured for fast decision-making at point of care</li>
+      <li>Designed for clinical accuracy and patient safety</li>
+      <li>Continuously updated to current board standards</li>
+    </ul>
+  </div>
+</div>
+
+<!-- PRICING -->
+<div class="section">
+  <div class="section-hdr">Choose Your Plan</div>
+  <div class="pricing-wrap">
+
+    <div class="plan featured" id="planAnnual" onclick="selectPlan('annual')">
+      <div>
+        <div class="plan-name">Annual</div>
+        <div class="plan-desc">Billed once per year</div>
+        <div class="plan-save">Saves $60.88 vs monthly</div>
+      </div>
+      <div style="display:flex;align-items:center;">
+        <div style="text-align:right;">
+          <div class="plan-price">$119.99</div>
+          <div class="plan-per">per year</div>
+          <div class="plan-badge">Best Value</div>
+        </div>
+        <div class="plan-check" id="checkAnnual"></div>
+      </div>
+    </div>
+
+    <div class="plan" id="planMonthly" onclick="selectPlan('monthly')">
+      <div>
+        <div class="plan-name">Monthly</div>
+        <div class="plan-desc">Cancel anytime</div>
+      </div>
+      <div style="display:flex;align-items:center;">
+        <div style="text-align:right;">
+          <div class="plan-price">$14.99</div>
+          <div class="plan-per">per month</div>
+        </div>
+        <div class="plan-check" id="checkMonthly"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="fine-print">Prices subject to change. All plans renew automatically.</div>
+  <button class="cta-btn" id="ctaBtn" onclick="subscribe()">Subscribe to Annual — $119.99</button>
+  <div class="cta-note">Secure payment via Stripe. Access continues through end of billing period on cancellation.</div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="cancelModal">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <div class="modal-hdr-title">Manage Subscription</div>
+      <div class="modal-hdr-sub">Billing and cancellation</div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-disc">
+        <div class="modal-disc-lbl">⚠ Cancellation Policy</div>
+        <div class="modal-disc-text">Your subscription will remain active until the end of your current billing period on <strong id="billingDate">[date]</strong>. You will not be charged again after that date. <strong>No refunds on the current billing period.</strong></div>
+      </div>
+      <div class="modal-btns">
+        <button class="modal-keep" onclick="closeModal()">Keep My Subscription</button>
+        <button class="modal-cancel" onclick="confirmCancel()">Cancel Subscription</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+var selectedPlan = "annual";
+
+function selectPlan(plan) {
+  selectedPlan = plan;
+  var ca = document.getElementById("checkAnnual");
+  var cm = document.getElementById("checkMonthly");
+  var pa = document.getElementById("planAnnual");
+  var pm = document.getElementById("planMonthly");
+  var btn = document.getElementById("ctaBtn");
+
+  pa.classList.toggle("selected", plan === "annual");
+  pm.classList.toggle("selected", plan === "monthly");
+
+  var activeStyle = "background:#3A6EA5;border-color:#818cf8;width:22px;height:22px;border:2px solid #3A6EA5;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:12px;";
+  var inactiveStyle = "background:#fff;border-color:#DDE1E7;width:22px;height:22px;border:2px solid #DDE1E7;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:12px;";
+  var check = "<span style='color:#fff;font-size:11px;font-weight:800;'>✓</span>";
+
+  if (plan === "annual") {
+    ca.style.cssText = activeStyle; ca.innerHTML = check;
+    cm.style.cssText = inactiveStyle; cm.innerHTML = "";
+    btn.textContent = "Subscribe to Annual — $119.99";
+  } else {
+    cm.style.cssText = activeStyle; cm.innerHTML = check;
+    ca.style.cssText = inactiveStyle; ca.innerHTML = "";
+    btn.textContent = "Subscribe Monthly — $14.99";
+  }
+}
+
+function subscribe() {
+  alert("Proceeding to checkout for " + (selectedPlan === "annual" ? "$119.99/year" : "$14.99/month") + ". Stripe payment coming soon.");
+}
+
+function openModal() {
+  var now = new Date();
+  var end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+  var m = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  document.getElementById("billingDate").textContent = m[end.getMonth()] + " " + end.getDate() + ", " + end.getFullYear();
+  document.getElementById("cancelModal").classList.add("open");
+}
+
+function closeModal() { document.getElementById("cancelModal").classList.remove("open"); }
+function confirmCancel() { closeModal(); alert("Subscription cancelled. Access continues through end of billing period."); }
+document.getElementById("cancelModal").addEventListener("click", function(e) { if (e.target === this) closeModal(); });
+
+function goBack() {
+  if (document.referrer) { window.history.back(); } else { window.location.href = "family-medicine.html"; }
+}
+function signOut() {
+  try { firebase.auth().signOut().then(function() { window.location.href = "login.html"; }); }
+  catch(e) { window.location.href = "login.html"; }
+}
+
+try {
+  if (!firebase.apps.length) {
+    firebase.initializeApp({
+      apiKey: "AIzaSyAH20q0fPjFt0YJf43d7tocXhrCzJY54Ok",
+      authDomain: "treyrenee-urgentrx.firebaseapp.com",
+      projectId: "treyrenee-urgentrx",
+      appId: "1:732253467641:web:0053b4d8c452055ca34328"
+    });
+  }
+  firebase.auth().onAuthStateChanged(function(user) {
+    if (user) { document.getElementById("navUser").textContent = (user.displayName || user.email || "").split("@")[0]; }
+    else { window.location.href = "login.html"; }
+  });
+} catch(e) { document.getElementById("navUser").textContent = "Provider"; }
+
+selectPlan("annual");
+</script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+</body>
+</html>
