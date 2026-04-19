@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>VitalRx — Sign In</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:#0B1F3A;min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;}
+
+/* ── NAV ── */
+.nav{background:#0B1F3A;height:46px;display:flex;align-items:center;padding:0 20px;border-bottom:1px solid rgba(255,255,255,.06);}
+.brand{display:flex;align-items:center;gap:8px;text-decoration:none;}
+.brand-mark{width:26px;height:26px;background:#3A6EA5;border-radius:4px;display:grid;place-items:center;font-size:11px;font-weight:800;color:#fff;}
+.brand-name{font-size:13px;font-weight:700;color:#fff;}
+.brand-sub{font-size:9px;color:#6B7280;text-transform:uppercase;letter-spacing:.5px;display:block;margin-top:-1px;}
+.beta{background:rgba(58,110,165,.25);color:#7FB3E0;font-size:9px;font-weight:700;padding:3px 8px;border-radius:3px;border:1px solid rgba(58,110,165,.35);text-transform:uppercase;letter-spacing:.5px;margin-left:auto;}
+
+/* ── HERO BACKGROUND ── */
+.hero-wrap{flex:1;background:linear-gradient(135deg,#0B1F3A 0%,#0d2149 55%,#0a1e3d 100%);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;padding:40px 20px;}
+.hero-wrap::before{content:'';position:absolute;top:-100px;right:-80px;width:500px;height:500px;background:radial-gradient(circle,rgba(58,110,165,.12) 0%,transparent 70%);pointer-events:none;}
+.hero-wrap::after{content:'';position:absolute;bottom:-80px;left:-60px;width:400px;height:400px;background:radial-gradient(circle,rgba(10,30,61,.15) 0%,transparent 70%);pointer-events:none;}
+
+/* ── CENTER CONTAINER ── */
+.center{width:100%;max-width:420px;position:relative;z-index:1;}
+
+/* ── TOP BRANDING ── */
+.page-brand{text-align:center;margin-bottom:28px;}
+.page-mark{width:52px;height:52px;background:#3A6EA5;border-radius:10px;display:grid;place-items:center;font-family:'DM Serif Display',serif;font-size:22px;color:#fff;margin:0 auto 12px;box-shadow:0 4px 20px rgba(58,110,165,.4);}
+.page-title{font-family:'DM Serif Display',serif;font-size:26px;color:#fff;letter-spacing:-.3px;margin-bottom:4px;}
+.page-title em{font-style:italic;color:#3A6EA5;}
+.page-sub{font-size:12px;color:rgba(255,255,255,.4);line-height:1.5;}
+
+/* ── CARD ── */
+.card{background:#fff;border-radius:8px;padding:28px 28px 24px;box-shadow:0 8px 40px rgba(0,0,0,.25);}
+
+/* ── TABS ── */
+.tab-strip{display:flex;background:#F1F4F8;border-radius:5px;padding:3px;margin-bottom:22px;}
+.tab{flex:1;padding:7px;text-align:center;font-size:12.5px;font-weight:600;color:#6B7280;cursor:pointer;border-radius:4px;transition:all .15s;border:none;background:transparent;font-family:'Inter',sans-serif;}
+.tab.on{background:#fff;color:#0B1F3A;box-shadow:0 1px 4px rgba(0,0,0,.08);}
+
+/* ── FORM ── */
+.form-title{font-size:15px;font-weight:800;color:#0B1F3A;margin-bottom:3px;letter-spacing:-.2px;}
+.form-sub{font-size:11.5px;color:#6B7280;margin-bottom:18px;}
+.field{margin-bottom:12px;}
+.field label{display:block;font-size:10.5px;font-weight:700;color:#374151;margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px;}
+.field input{width:100%;padding:9px 11px;border:1.5px solid #E5E7EB;border-radius:5px;font-size:13px;color:#0B1F3A;font-family:'Inter',sans-serif;outline:none;transition:border-color .15s;}
+.field input:focus{border-color:#3A6EA5;}
+.field input::placeholder{color:#C4C9D4;font-size:12.5px;}
+.field-hint{font-size:10.5px;color:#9CA3AF;margin-top:3px;}
+.forgot{font-size:11px;color:#3A6EA5;text-decoration:none;display:block;text-align:right;margin-top:-8px;margin-bottom:14px;}
+.submit-btn{width:100%;padding:11px;background:#0B1F3A;color:#fff;border:none;border-radius:5px;font-size:13.5px;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;transition:background .15s;margin-top:4px;letter-spacing:.1px;}
+.submit-btn:hover{background:#3A6EA5;}
+.submit-btn:disabled{background:#9CA3AF;cursor:not-allowed;}
+.terms{font-size:10.5px;color:#9CA3AF;text-align:center;margin-top:14px;line-height:1.6;}
+.terms a{color:#3A6EA5;text-decoration:none;}
+.msg{padding:8px 11px;border-radius:4px;font-size:12px;font-weight:600;margin-bottom:12px;display:none;line-height:1.4;}
+.msg-error{background:#FEF2F2;color:#B91C1C;border:1px solid #fca5a5;}
+.msg-success{background:#F0F7F0;color:#2E7D32;border:1px solid #86efac;}
+
+/* ── FEATURES BELOW CARD ── */
+.features{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px;}
+.feat{display:flex;align-items:center;gap:8px;}
+.feat-ico{font-size:14px;}
+.feat-txt{font-size:11px;color:rgba(255,255,255,.45);line-height:1.4;}
+.feat-txt strong{color:rgba(255,255,255,.7);display:block;font-size:11.5px;}
+
+/* ── FOOTER ── */
+.footer{padding:12px 20px;text-align:center;font-size:10.5px;color:rgba(255,255,255,.2);border-top:1px solid rgba(255,255,255,.05);}
+.footer a{color:rgba(255,255,255,.3);text-decoration:none;}
+
+@media(max-width:480px){.hero-wrap{padding:24px 16px;}.card{padding:22px 20px;}.features{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a class="brand" href="index.html">
+    <div class="brand-mark">Rx</div>
+    <div><div class="brand-name">VitalRx</div><div class="brand-sub">Clinical Decision Support</div></div>
+  </a>
+  <span class="beta">Beta</span>
+</nav>
+
+<div class="hero-wrap">
+  <div class="center">
+
+    <div class="page-brand">
+      <div class="page-mark">Rx</div>
+      <div class="page-title">Welcome to <em>VitalRx</em></div>
+      <div class="page-sub">Evidence-based clinical decision support<br>built for urgent care providers</div>
+    </div>
+
+    <div class="card">
+      <div class="tab-strip">
+        <button class="tab on" id="tab-signin" onclick="showTab('signin')">Sign In</button>
+        <button class="tab" id="tab-register" onclick="showTab('register')">Create Account</button>
+      </div>
+
+      <!-- SIGN IN -->
+      <div id="panel-signin">
+        <div class="form-title">Sign in to your account</div>
+        <div class="form-sub">Access your clinical tools and protocols</div>
+        <div class="msg msg-error" id="signin-error"></div>
+        <div class="msg msg-success" id="signin-success"></div>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="si-email" placeholder="your@email.com">
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input type="password" id="si-password" placeholder="Your password">
+        </div>
+        <a class="forgot" href="#" onclick="showForgot()">Forgot password?</a>
+        <button class="submit-btn" onclick="doSignIn()">Sign In &rarr;</button>
+        <div class="terms">No account yet? <a href="#" onclick="showTab('register')">Create one free</a></div>
+      </div>
+
+      <!-- REGISTER -->
+      <div id="panel-register" style="display:none;">
+        <div class="form-title">Create your free account</div>
+        <div class="form-sub">Full access during beta &mdash; no credit card needed</div>
+        <div class="msg msg-error" id="reg-error"></div>
+        <div class="msg msg-success" id="reg-success"></div>
+        <div class="field">
+          <label>Full Name</label>
+          <input type="text" id="reg-name" placeholder="Dr. Jane Smith, DNP">
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="reg-email" placeholder="your@email.com">
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input type="password" id="reg-password" placeholder="Min. 8 characters">
+          <div class="field-hint">Use at least 8 characters with letters and numbers</div>
+        </div>
+        <div class="field">
+          <label>Confirm Password</label>
+          <input type="password" id="reg-confirm" placeholder="Repeat password">
+        </div>
+        <div class="field" style="margin-bottom:10px;">
+          <div style="display:flex;align-items:flex-start;gap:9px;background:#F8FAFC;border:1.5px solid #E5E7EB;border-radius:5px;padding:11px 12px;">
+            <input type="checkbox" id="disc-agree" style="width:15px;height:15px;margin-top:2px;cursor:pointer;accent-color:#0B1F3A;flex-shrink:0;" onchange="discCheck()">
+            <label for="disc-agree" style="font-family:'Inter',sans-serif;font-size:11.5px;color:#374151;line-height:1.55;cursor:pointer;">
+              I have read and agree to the <a href="#" onclick="showDisc();return false;" style="color:#3A6EA5;font-weight:700;">VitalRx Clinical Disclaimer & Terms of Use</a>. I confirm I am a healthcare provider, student, or healthcare professional in training.
+            </label>
+          </div>
+        </div>
+        <button class="submit-btn" id="reg-submit-btn" onclick="doRegister()" style="background:#9CA3AF;cursor:not-allowed;" disabled>Create Account &rarr;</button>
+        <div class="terms">By registering you agree to our <a href="#">Terms</a> &amp; <a href="#">Privacy Policy</a><br>Already have an account? <a href="#" onclick="showTab('signin')">Sign in</a></div>
+      </div>
+
+      <!-- FORGOT -->
+      <div id="panel-forgot" style="display:none;">
+        <div class="form-title">Reset your password</div>
+        <div class="form-sub">Enter your email and we will send a reset link</div>
+        <div class="msg msg-success" id="forgot-success"></div>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="forgot-email" placeholder="your@email.com">
+        </div>
+        <button class="submit-btn" onclick="doForgot()">Send Reset Link &rarr;</button>
+        <div class="terms"><a href="#" onclick="showTab('signin')">&larr; Back to sign in</a></div>
+      </div>
+    </div>
+
+    <div class="features">
+      <div class="feat"><div class="feat-ico">💊</div><div class="feat-txt"><strong>200+ Medications</strong>Adult &amp; peds dosing</div></div>
+      <div class="feat"><div class="feat-ico">🩺</div><div class="feat-txt"><strong>23 Protocols</strong>With allergy alternatives</div></div>
+      <div class="feat"><div class="feat-ico">⚡</div><div class="feat-txt"><strong>Clinical Tools</strong>Ottawa, anaphylaxis &amp; more</div></div>
+      <div class="feat"><div class="feat-ico">📋</div><div class="feat-txt"><strong>Guidelines</strong>Stewardship &amp; 2024 sources</div></div>
+    </div>
+
+  </div>
+</div>
+
+<div class="footer">
+  &copy; 2025 VitalRx &nbsp;&middot;&nbsp; <a href="#">Privacy</a> &nbsp;&middot;&nbsp; <a href="#">Terms</a> &nbsp;&middot;&nbsp; Built by a DNP for urgent care providers
+</div>
+
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
+           sendPasswordResetEmail, updateProfile, onAuthStateChanged }
+    from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+  // ── FIREBASE CONFIG ──────────────────────────────────────
+  // INSTRUCTIONS: Replace these values with your own Firebase project config.
+  // 1. Go to console.firebase.google.com
+  // 2. Create a new project (free)
+  // 3. Add a Web App
+  // 4. Copy your config object and paste the values below
+  const firebaseConfig = {
+    apiKey:            "AIzaSyAH20q0fPjFt0YJf43d7tocXhrCzJY54Ok",
+    authDomain:        "treyrenee-urgentrx.firebaseapp.com",
+    projectId:         "treyrenee-urgentrx",
+    storageBucket:     "treyrenee-urgentrx.firebasestorage.app",
+    messagingSenderId: "732253467641",
+    appId:             "1:732253467641:web:0053b4d8c452055ca34328",
+    measurementId:     "G-TLQ6933YG8"
+  };
+
+  const app  = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  // Redirect if already logged in
+  onAuthStateChanged(auth, function(user) {
+    if (user) window.location.href = 'specialty-select.html';
+  });
+
+  // ── SIGN IN ──────────────────────────────────────────────
+  window.doSignIn = async function() {
+    var email    = document.getElementById('si-email').value.trim();
+    var password = document.getElementById('si-password').value;
+    var errEl    = document.getElementById('signin-error');
+    var sucEl    = document.getElementById('signin-success');
+    errEl.style.display = 'none';
+    sucEl.style.display = 'none';
+
+    if (!email || !password) {
+      errEl.textContent = 'Please enter your email and password.';
+      errEl.style.display = 'block'; return;
+    }
+    var btn = document.querySelector('#panel-signin .submit-btn');
+    btn.disabled = true; btn.textContent = 'Signing in...';
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      sucEl.textContent = 'Success! Redirecting...';
+      sucEl.style.display = 'block';
+      setTimeout(function(){ window.location.href = 'specialty-select.html'; }, 1000);
+    } catch(e) {
+      var msgs = {
+        'auth/user-not-found':   'No account found with that email.',
+        'auth/wrong-password':   'Incorrect password. Please try again.',
+        'auth/invalid-email':    'Please enter a valid email address.',
+        'auth/too-many-requests':'Too many attempts. Please wait a moment.',
+        'auth/invalid-credential':'Email or password is incorrect.'
+      };
+      errEl.textContent = msgs[e.code] || 'Sign in failed. Please try again.';
+      errEl.style.display = 'block';
+    }
+    btn.disabled = false; btn.textContent = 'Sign In \u2192';
+  };
+
+  // ── REGISTER ─────────────────────────────────────────────
+  window.doRegister = async function() {
+    var name     = document.getElementById('reg-name').value.trim();
+    var email    = document.getElementById('reg-email').value.trim();
+    var password = document.getElementById('reg-password').value;
+    var confirm  = document.getElementById('reg-confirm').value;
+    var errEl    = document.getElementById('reg-error');
+    var sucEl    = document.getElementById('reg-success');
+    errEl.style.display = 'none';
+    sucEl.style.display = 'none';
+
+    if (!name || !email || !password) {
+      errEl.textContent = 'Please fill in all fields.';
+      errEl.style.display = 'block'; return;
+    }
+    if (password.length < 8) {
+      errEl.textContent = 'Password must be at least 8 characters.';
+      errEl.style.display = 'block'; return;
+    }
+    if (password !== confirm) {
+      errEl.textContent = 'Passwords do not match.';
+      errEl.style.display = 'block'; return;
+    }
+    var btn = document.querySelector('#panel-register .submit-btn');
+    btn.disabled = true; btn.textContent = 'Creating account...';
+    try {
+      var cred = await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(cred.user, { displayName: name });
+      sucEl.textContent = 'Account created! Redirecting to VitalRx...';
+      sucEl.style.display = 'block';
+      setTimeout(function(){ window.location.href = 'specialty-select.html'; }, 1500);
+    } catch(e) {
+      var msgs = {
+        'auth/email-already-in-use': 'An account with this email already exists.',
+        'auth/invalid-email':        'Please enter a valid email address.',
+        'auth/weak-password':        'Password is too weak. Use at least 8 characters.'
+      };
+      errEl.textContent = msgs[e.code] || 'Registration failed. Please try again.';
+      errEl.style.display = 'block';
+    }
+    btn.disabled = false; btn.textContent = 'Create Account \u2192';
+  };
+
+  // ── FORGOT PASSWORD ───────────────────────────────────────
+  window.doForgot = async function() {
+    var email = document.getElementById('forgot-email').value.trim();
+    var sucEl = document.getElementById('forgot-success');
+    if (!email) { alert('Please enter your email.'); return; }
+    try {
+      await sendPasswordResetEmail(auth, email);
+      sucEl.textContent = 'Reset link sent! Check your email inbox.';
+      sucEl.style.display = 'block';
+    } catch(e) {
+      alert('Could not send reset email. Please check the address and try again.');
+    }
+  };
+</script>
+
+<style>
+#disc-modal{display:none;position:fixed;inset:0;background:rgba(11,31,58,.92);z-index:9999;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(3px);}
+#disc-modal.open{display:flex;}
+#disc-mbox{background:#fff;border-radius:8px;max-width:580px;width:100%;max-height:86vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.4);overflow:hidden;}
+#disc-mhdr{background:#0B1F3A;padding:16px 20px;flex-shrink:0;}
+#disc-mhdr h2{font-family:'Inter',sans-serif;font-size:14px;font-weight:800;color:#fff;margin-bottom:3px;}
+#disc-mhdr p{font-family:'Inter',sans-serif;font-size:10.5px;color:rgba(255,255,255,.4);}
+#disc-mbody{flex:1;overflow-y:auto;padding:16px 20px;}
+#disc-mbody::-webkit-scrollbar{width:4px;}
+#disc-mbody::-webkit-scrollbar-thumb{background:#E5E7EB;border-radius:2px;}
+.dms{margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #F1F4F8;}
+.dms:last-child{border-bottom:none;margin-bottom:0;}
+.dms h3{font-family:'Inter',sans-serif;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:#0B1F3A;margin-bottom:5px;}
+.dms p,.dms li{font-family:'Inter',sans-serif;font-size:11.5px;color:#374151;line-height:1.65;}
+.dms ul{padding-left:14px;}
+.dms li{margin-bottom:2px;}
+.dmw{background:#FEF2F2;border-left:3px solid #B91C1C;border-radius:0 4px 4px 0;padding:8px 11px;margin-bottom:12px;}
+.dmw p{font-family:'Inter',sans-serif;font-size:11.5px;color:#7F1D1D;font-weight:600;line-height:1.6;}
+#disc-mftr{background:#F8FAFC;border-top:1px solid #E5E7EB;padding:12px 20px;flex-shrink:0;text-align:center;}
+#disc-mclose{background:#0B1F3A;color:#fff;border:none;border-radius:5px;padding:10px 28px;font-size:13px;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;}
+#disc-mclose:hover{background:#3A6EA5;}
+</style>
+
+<!-- DISCLAIMER MODAL -->
+<div id="disc-modal">
+  <div id="disc-mbox">
+    <div id="disc-mhdr">
+      <h2>⚕ VitalRx — Clinical Disclaimer & Terms of Use</h2>
+      <p>Please read before creating your account</p>
+    </div>
+    <div id="disc-mbody">
+      <div class="dmw"><p>⚠ VitalRx is intended for healthcare providers, students, and healthcare professionals in training. It is not intended for use by the general public or for patient self-diagnosis.</p></div>
+      <div class="dms">
+        <h3>📋 Not a Substitute for Clinical Judgment</h3>
+        <p>VitalRx is a clinical reference tool designed to support — not replace — professional judgment. All clinical decisions remain the sole responsibility of the treating provider or supervising clinician. VitalRx does not practice medicine and does not establish a provider-patient relationship.</p>
+      </div>
+      <div class="dms">
+        <h3>👩‍⚕️ Intended Users</h3>
+        <p>Designed for physicians, nurse practitioners, physician assistants, registered nurses, pharmacists, medical and nursing students, and other healthcare professionals or students in training. Students must always defer to their supervising clinical instructor or preceptor.</p>
+      </div>
+      <div class="dms">
+        <h3>📚 Accuracy & Currency of Information</h3>
+        <ul>
+          <li>Content is based on evidence-based guidelines current at time of publication</li>
+          <li>Medical knowledge evolves — information may not reflect the most recent guidelines</li>
+          <li>Always verify critical dosing with current prescribing references and institutional protocols</li>
+          <li>Content has not been approved or reviewed by the FDA or any regulatory body</li>
+        </ul>
+      </div>
+      <div class="dms">
+        <h3>⚡ Emergency Situations</h3>
+        <p>Not intended for life-threatening emergencies. In any emergency call 911 immediately. Do not delay emergency care to consult this application.</p>
+      </div>
+      <div class="dms">
+        <h3>⚖️ Limitation of Liability</h3>
+        <ul>
+          <li>VitalRx and its creators disclaim all liability for any adverse outcomes arising from use of this application</li>
+          <li>The user assumes full responsibility for all clinical decisions made using this tool</li>
+          <li>Use does not create a provider-patient relationship between VitalRx and any patient</li>
+        </ul>
+      </div>
+      <div class="dms">
+        <h3>🔒 Privacy & HIPAA Notice</h3>
+        <p>VitalRx does not store patient data. Do not enter patient-identifiable information. VitalRx is not a HIPAA-covered entity and should not be used to store or transmit protected health information.</p>
+      </div>
+      <div class="dms">
+        <h3>📄 Governing Terms</h3>
+        <p>Use of VitalRx constitutes acceptance of these terms. Terms may be updated at any time. Governed by the laws of the State of Florida.</p>
+      </div>
+    </div>
+    <div id="disc-mftr">
+      <button id="disc-mclose" onclick="closeDisc()">Close &amp; Return to Registration</button>
+      <div style="font-family:'Inter',sans-serif;font-size:10px;color:#9CA3AF;margin-top:8px;">&copy; 2025 VitalRx &nbsp;·&nbsp; Built by a DNP for healthcare providers and students</div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showDisc(){ document.getElementById('disc-modal').classList.add('open'); }
+function closeDisc(){ document.getElementById('disc-modal').classList.remove('open'); }
+function discCheck(){
+  var chk = document.getElementById('disc-agree').checked;
+  var btn = document.getElementById('reg-submit-btn');
+  btn.disabled = !chk;
+  btn.style.background = chk ? '' : '#9CA3AF';
+  btn.style.cursor = chk ? '' : 'not-allowed';
+}
+</script>
+
+<script>
+function showTab(tab) {
+  document.getElementById('panel-signin').style.display   = 'none';
+  document.getElementById('panel-register').style.display = 'none';
+  document.getElementById('panel-forgot').style.display   = 'none';
+  document.getElementById('tab-signin').classList.remove('on');
+  document.getElementById('tab-register').classList.remove('on');
+  if (tab === 'signin') {
+    document.getElementById('panel-signin').style.display = 'block';
+    document.getElementById('tab-signin').classList.add('on');
+  } else if (tab === 'register') {
+    document.getElementById('panel-register').style.display = 'block';
+    document.getElementById('tab-register').classList.add('on');
+  } else {
+    document.getElementById('panel-forgot').style.display = 'block';
+  }
+}
+function showForgot(){ showTab('forgot'); }
+document.addEventListener('keydown', function(e){
+  if(e.key !== 'Enter') return;
+  var si = document.getElementById('panel-signin').style.display !== 'none';
+  var rg = document.getElementById('panel-register').style.display !== 'none';
+  if(si) doSignIn();
+  else if(rg) doRegister();
+  else doForgot();
+});
+</script>
+
+
+</body>
+</html>
