@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>VitalRx</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0A0F1E;
+  --surface:#141929;
+  --surface2:#1C2338;
+  --nav:#0D1220;
+  --indigo:#818cf8;
+  --indigodim:rgba(129,140,248,.15);
+  --indigoglow:rgba(129,140,248,.25);
+  --blue:#60a5fa;
+  --red:#f87171;
+  --redglow:rgba(248,113,113,.35);
+  --reddim:rgba(248,113,113,.12);
+  --purple:#a78bfa;
+  --purpledim:rgba(167,139,250,.12);
+  --green:#34d399;
+  --greendim:rgba(52,211,153,.1);
+  --amber:#fbbf24;
+  --amberdim:rgba(251,191,36,.1);
+  --text:#f1f5f9;
+  --text2:#94a3b8;
+  --text3:#64748b;
+  --border:rgba(255,255,255,.06);
+  --borderc:rgba(255,255,255,.08);
+  --r:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;}
+
+/* ── APP SHELL ── */
+.app{display:flex;flex-direction:column;height:100vh;max-width:480px;margin:0 auto;position:relative;background:var(--bg);}
+
+/* ── NAV ── */
+.nav{
+  background:var(--nav);
+  padding:12px 18px 12px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid rgba(129,140,248,.12);
+  flex-shrink:0;
+  box-shadow:0 1px 0 rgba(129,140,248,.06);
+}
+.nav-brand{display:flex;align-items:center;gap:9px;}
+.nav-logo{
+  width:30px;height:30px;
+  background:var(--indigo);
+  border-radius:7px;
+  display:grid;place-items:center;
+  flex-shrink:0;
+}
+.nav-logo svg{width:16px;height:16px;fill:#fff;}
+.nav-name{
+  font-size:18px;font-weight:900;
+  color:#fff;letter-spacing:-.4px;
+}
+.nav-name em{
+  font-style:italic;
+  color:var(--indigo);
+  font-weight:900;
+}
+.nav-right{display:flex;align-items:center;gap:0;}
+.nav-link{
+  font-size:11px;font-weight:500;
+  color:var(--text2);
+  background:none;border:none;cursor:pointer;
+  font-family:'Inter',sans-serif;
+  padding:0 7px;
+  letter-spacing:.1px;
+}
+.nav-link:active{color:#fff;}
+.nav-sep{color:rgba(255,255,255,.15);font-size:10px;user-select:none;}
+
+/* ── MAIN CONTENT ── */
+.main{flex:1;overflow:hidden;display:flex;flex-direction:column;position:relative;}
+
+/* STICKY SEARCH HEADER — always visible */
+.search-header{
+  background:var(--nav);
+  padding:10px 18px 14px;
+  flex-shrink:0;
+  border-bottom:1px solid rgba(129,140,248,.1);
+}
+.clear-row{
+  display:flex;justify-content:flex-end;
+  margin-bottom:8px;min-height:18px;
+}
+.clear-btn{
+  background:none;border:none;
+  font-size:11.5px;font-weight:600;
+  color:rgba(129,140,248,.8);
+  cursor:pointer;font-family:'Inter',sans-serif;
+  padding:0;opacity:0;pointer-events:none;
+  transition:opacity .2s;letter-spacing:.2px;
+  text-transform:uppercase;
+}
+.clear-btn.show{opacity:1;pointer-events:all;}
+.clear-btn:active{color:#fff;}
+
+/* HERO SEARCH */
+.search-wrap{position:relative;margin-bottom:0;}
+.search-box{
+  width:100%;
+  background:rgba(255,255,255,.06);
+  border:1.5px solid rgba(129,140,248,.3);
+  border-radius:13px;
+  padding:14px 16px 14px 46px;
+  font-size:16px;
+  font-family:'Inter',sans-serif;
+  color:var(--text);
+  outline:none;
+  transition:border-color .2s,box-shadow .2s;
+  -webkit-appearance:none;
+  font-weight:400;letter-spacing:-.1px;
+}
+.search-box:focus{
+  border-color:var(--indigo);
+  box-shadow:0 0 0 3px var(--indigodim);
+}
+.search-box::placeholder{color:var(--text3);font-size:15px;font-weight:400;}
+.search-ic{
+  position:absolute;left:15px;top:50%;
+  transform:translateY(-50%);
+  color:var(--indigo);pointer-events:none;opacity:.7;
+}
+.search-ic svg{width:17px;height:17px;}
+
+/* SCROLLABLE CONTENT AREA */
+.scroll-area{
+  flex:1;overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  background:var(--bg);
+}
+.scroll-area::-webkit-scrollbar{display:none;}
+
+/* SEARCH PAGE CONTENT */
+.search-page{
+  padding:24px 20px 20px;
+  display:flex;flex-direction:column;
+}
+
+/* SUBTITLE */
+.search-sub{
+  font-size:14px;font-weight:500;
+  color:rgba(255,255,255,.85);
+  margin-top:20px;
+  margin-bottom:5px;
+  letter-spacing:.2px;line-height:1.5;
+  text-align:center;
+}
+
+/* CHIP ROW — word removal */
+.chip-row{
+  display:flex;flex-wrap:wrap;gap:6px;
+  margin-bottom:0;max-height:0;overflow:hidden;
+  transition:max-height .2s,margin-bottom .2s;
+}
+.chip-row.show{max-height:80px;margin-bottom:16px;}
+.chip{
+  display:inline-flex;align-items:center;gap:5px;
+  background:var(--indigodim);
+  border:1px solid rgba(129,140,248,.25);
+  border-radius:6px;
+  padding:4px 9px;
+  font-size:12px;font-weight:600;
+  color:var(--indigo);
+  cursor:pointer;user-select:none;
+}
+.chip:active{background:rgba(129,140,248,.25);}
+.chip-x{font-size:10px;opacity:.7;}
+
+/* SUGGESTION CARDS */
+.search-examples{
+  font-size:12.5px;font-weight:400;
+  color:#A5AFC5;
+  margin-bottom:0;
+  line-height:1.7;
+  letter-spacing:.1px;
+  pointer-events:none;
+  user-select:none;
+  text-align:center;
+}
+
+/* ── RESULTS PAGE ── */
+.results-page{
+  padding:14px 16px 20px;
+  display:none;
+}
+.results-page.show{display:block;}
+.results-label{
+  font-size:11px;font-weight:800;
+  text-transform:uppercase;letter-spacing:1.2px;
+  color:rgba(255,255,255,.9);margin-bottom:12px;
+  padding-top:2px;
+}
+
+/* ── DIFFERENTIAL CARDS ── */
+.card{
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:10px;
+  padding:13px 14px;margin-bottom:7px;
+  cursor:pointer;
+  display:flex;align-items:center;gap:12px;
+  position:relative;overflow:hidden;
+  user-select:none;-webkit-user-select:none;
+  transition:background .12s,box-shadow .12s,transform .12s;
+}
+
+.card.hi-risk:active{
+  background:rgba(248,113,113,.12);
+  box-shadow:0 0 0 1.5px var(--red),0 4px 16px var(--redglow);
+  transform:scale(.98);transition:all 50ms ease;
+}
+.card.hi-rel:active{
+  background:rgba(167,139,250,.12);
+  box-shadow:0 0 0 1.5px var(--purple),0 4px 16px rgba(167,139,250,.35);
+  transform:scale(.98);transition:all 50ms ease;
+}
+.card:not(.hi-risk):not(.hi-rel):active{
+  background:var(--indigodim);
+  box-shadow:0 0 0 1.5px var(--indigo),0 4px 16px var(--indigoglow);
+  transform:scale(.98);transition:all 50ms ease;
+}
+
+.dot{width:11px;height:11px;border-radius:50%;flex-shrink:0;align-self:center;margin-top:0;}
+.card.hi-risk .dot{background:var(--red);box-shadow:0 0 6px var(--red);animation:pdot 2s infinite;}
+.card.hi-rel .dot{background:var(--purple);box-shadow:0 0 6px var(--purple);}
+.card:not(.hi-risk):not(.hi-rel) .dot{background:rgba(255,255,255,.5);}
+@keyframes pdot{0%{box-shadow:0 0 0 0 rgba(248,113,113,.6);}70%{box-shadow:0 0 0 6px rgba(248,113,113,0);}100%{box-shadow:0 0 0 0 rgba(248,113,113,0);}}
+
+.card-body{flex:1;min-width:0;}
+.card-name{
+  font-size:15px;font-weight:700;
+  color:#f1f5f9;
+  line-height:1.25;margin-bottom:4px;
+  letter-spacing:-.1px;
+}
+.card-blurb{font-size:12.5px;font-weight:400;color:rgba(255,255,255,.45);}
+
+.badge{border-radius:5px;padding:2px 7px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;flex-shrink:0;align-self:flex-start;margin-top:2px;}
+.badge-red{background:rgba(248,113,113,.15);border:1px solid rgba(248,113,113,.3);color:var(--red);}
+.badge-purple{background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.3);color:var(--purple);}
+.card-arr{color:rgba(255,255,255,.15);flex-shrink:0;}
+.card-arr svg{width:14px;height:14px;}
+
+/* ── BOTTOM NAV ── */
+.bottom-nav{
+  background:var(--nav);
+  border-top:1px solid var(--border);
+  display:flex;align-items:stretch;
+  flex-shrink:0;
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+.tab-btn{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:10px 4px 11px;
+  background:none;border:none;cursor:pointer;
+  font-family:'Inter',sans-serif;
+  transition:background .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.tab-btn:active{background:rgba(255,255,255,.04);}
+.tab-btn.active .tab-icon{color:var(--indigo);}
+.tab-btn.active .tab-label{color:var(--indigo);font-weight:800;}
+.tab-icon{color:rgba(255,255,255,.5);margin-bottom:4px;transition:color .15s;}
+.tab-icon svg{width:20px;height:20px;}
+.tab-label{font-size:9.5px;font-weight:600;color:rgba(255,255,255,.8);letter-spacing:.3px;text-align:center;transition:color .15s;}
+
+/* ── BOTTOM SHEET — placeholders ── */
+.sheet-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:300;opacity:0;pointer-events:none;transition:opacity .25s;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);}
+.sheet-overlay.open{opacity:1;pointer-events:all;}
+.sheet{
+  position:fixed;bottom:0;left:50%;
+  transform:translateX(-50%) translateY(100%);
+  width:100%;max-width:480px;
+  background:var(--surface);
+  border-radius:18px 18px 0 0;
+  z-index:400;
+  transition:transform .3s cubic-bezier(.32,.72,0,1);
+  max-height:75vh;
+  display:flex;flex-direction:column;
+  border-top:1px solid var(--borderc);
+}
+.sheet.open{transform:translateX(-50%) translateY(0);}
+.sheet-handle{width:36px;height:4px;background:rgba(255,255,255,.15);border-radius:2px;margin:12px auto 0;}
+.sheet-hdr{padding:16px 20px 12px;border-bottom:1px solid var(--border);}
+.sheet-title{font-size:17px;font-weight:800;color:var(--text);letter-spacing:-.2px;}
+.sheet-sub{font-size:13px;color:var(--text2);margin-top:3px;}
+.sheet-body{flex:1;overflow-y:auto;padding:16px 20px 32px;}
+.sheet-body::-webkit-scrollbar{display:none;}
+.sheet-item{
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:10px;
+  padding:13px 16px;
+  margin-bottom:7px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.sheet-item-name{font-size:14px;font-weight:600;color:var(--text);}
+.sheet-item-desc{font-size:12px;color:var(--text2);margin-top:2px;}
+.sheet-coming{
+  display:inline-flex;align-items:center;
+  background:var(--indigodim);border:1px solid rgba(129,140,248,.2);
+  border-radius:5px;padding:2px 8px;
+  font-size:10px;font-weight:700;color:var(--indigo);
+  letter-spacing:.3px;text-transform:uppercase;
+  white-space:nowrap;flex-shrink:0;
+}
+
+/* ── DRAWER ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;opacity:0;pointer-events:none;transition:opacity .25s;backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);}
+.overlay.open{opacity:1;pointer-events:all;}
+.drawer{
+  position:fixed;bottom:0;left:50%;
+  transform:translateX(-50%) translateY(102%);
+  width:100%;max-width:480px;
+  z-index:600;
+  transition:transform .32s cubic-bezier(.32,.72,0,1);
+  max-height:93vh;display:flex;flex-direction:column;
+  border-radius:18px 18px 0 0;overflow:hidden;
+  box-shadow:0 -16px 56px rgba(0,0,0,.5);
+  border-top:1px solid var(--borderc);
+}
+.drawer.open{transform:translateX(-50%) translateY(0);}
+.dr-pull{background:#0A1220;padding:10px 0 0;text-align:center;flex-shrink:0;}
+.dr-handle{width:36px;height:4px;background:rgba(255,255,255,.15);border-radius:2px;display:inline-block;}
+.dr-topbar{background:#0A1220;padding:6px 14px 4px;flex-shrink:0;}
+.dr-back{
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:7px;color:rgba(255,255,255,.6);
+  font-size:12.5px;font-weight:600;padding:6px 13px;
+  cursor:pointer;font-family:'Inter',sans-serif;
+  display:inline-flex;align-items:center;gap:3px;
+  letter-spacing:.1px;
+}
+.dr-back:active{background:rgba(255,255,255,.12);}
+.dr-hdr{background:#0A1220;padding:12px 18px;flex-shrink:0;}
+.dr-spec{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--indigo);margin-bottom:5px;}
+.dr-title{font-size:21px;font-weight:800;color:#fff;letter-spacing:-.4px;line-height:1.15;}
+.dr-blurb{font-size:13px;font-weight:400;color:var(--text2);margin-top:5px;}
+.dr-tabs{display:flex;background:#0A1220;padding:8px 12px 0;gap:3px;overflow-x:auto;flex-shrink:0;border-bottom:1px solid var(--border);}
+.dr-tabs::-webkit-scrollbar{display:none;}
+.tab{padding:9px 13px;font-size:12px;font-weight:700;color:rgba(255,255,255,.5);cursor:pointer;border:1px solid rgba(255,255,255,.12);border-bottom:2px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);border-radius:7px 7px 0 0;white-space:nowrap;font-family:'Inter',sans-serif;transition:all .15s;}
+.tab.on{color:#fff;border-color:rgba(255,255,255,.25);border-bottom-color:#0A1220;background:#0A1220;font-weight:800;}
+.tab.preg-glow{color:var(--amber);border-color:rgba(251,191,36,.35);background:rgba(251,191,36,.07);animation:pregpulse 2.5s infinite;}
+.tab.preg-glow.on{color:var(--amber);border-color:rgba(251,191,36,.4);border-bottom-color:#0A1220;background:#0A1220;animation:none;}
+@keyframes pregpulse{0%,100%{box-shadow:none;}50%{box-shadow:0 0 8px 2px rgba(251,191,36,.2);}}
+.dr-body{flex:1;overflow-y:auto;padding:18px 16px 36px;background:#0D1525;-webkit-overflow-scrolling:touch;}
+.dr-body::-webkit-scrollbar{display:none;}
+
+/* CONTENT STYLES */
+.cb{border-left:4px solid;padding:13px 14px;margin-bottom:12px;border-radius:0 8px 8px 0;}
+.cb-red{background:var(--reddim);border-color:var(--red);}
+.cb-blue{background:rgba(96,165,250,.1);border-color:var(--blue);}
+.cb-green{background:var(--greendim);border-color:var(--green);}
+.cb-amber{background:var(--amberdim);border-color:var(--amber);}
+.cb-navy{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.15);}
+.cb-indigo{background:var(--indigodim);border-color:var(--indigo);}
+.cb-lbl{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;margin-bottom:7px;}
+.cb-red .cb-lbl{color:var(--red);}
+.cb-blue .cb-lbl{color:var(--blue);}
+.cb-green .cb-lbl{color:var(--green);}
+.cb-amber .cb-lbl{color:var(--amber);}
+.cb-navy .cb-lbl{color:rgba(255,255,255,.4);}
+.cb-indigo .cb-lbl{color:var(--indigo);}
+.blist{list-style:none;display:flex;flex-direction:column;gap:9px;}
+.blist li{font-size:15px;color:rgba(255,255,255,.82);line-height:1.75;display:flex;align-items:flex-start;gap:10px;}
+.blist li::before{content:"•";color:var(--indigo);font-size:17px;font-weight:800;flex-shrink:0;line-height:1.5;}
+.blist li strong{color:#fff;font-weight:700;}
+.rx-block{background:var(--greendim);border-left:4px solid var(--green);border-radius:0 8px 8px 0;padding:13px 14px;margin-bottom:10px;}
+.rx-title{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--green);margin-bottom:5px;}
+.rx-drug{font-size:17px;font-weight:800;color:#fff;margin-bottom:4px;}
+.rx-dose{font-size:14px;color:rgba(255,255,255,.75);line-height:1.8;}
+.rx-note{font-size:13px;color:rgba(255,255,255,.4);margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.06);line-height:1.65;}
+.stitle{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--indigo);margin:18px 0 10px;padding-bottom:5px;border-bottom:1px solid rgba(129,140,248,.15);}
+.stitle:first-child{margin-top:0;}
+.gl-tag{display:inline-flex;align-items:center;background:var(--indigodim);color:var(--indigo);font-size:11px;font-weight:600;padding:5px 11px;border-radius:6px;margin-top:8px;border:1px solid rgba(129,140,248,.2);}
+.refer-box{background:var(--reddim);border:1.5px solid rgba(248,113,113,.25);border-radius:8px;padding:13px 14px;margin-bottom:12px;}
+.refer-title{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--red);margin-bottom:7px;}
+.refer-box p{font-size:14px;color:rgba(255,255,255,.82);line-height:1.75;}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- NAV -->
+  <div class="nav">
+    <div class="nav-brand">
+      <div class="nav-logo">
+        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l7.59-7.59L21 8l-9 9z"/></svg>
+      </div>
+      <div class="nav-name">Vital<em>Rx</em></div>
+    </div>
+    <div class="nav-right">
+      <span class="nav-link" style="color:var(--text2);cursor:default;">Provider</span>
+      <span class="nav-sep">|</span>
+      <button class="nav-link">Manage</button>
+      <span class="nav-sep">|</span>
+      <button class="nav-link">Sign Out</button>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- STICKY SEARCH HEADER -->
+    <div class="search-header">
+      <div class="clear-row">
+        <button class="clear-btn" id="clearBtn">Clear</button>
+      </div>
+      <div class="search-wrap">
+        <div class="search-ic">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </div>
+        <input class="search-box" id="searchBox" type="text"
+          placeholder="Search symptoms, vitals, age, gender..."
+          autocomplete="off" autocorrect="off" spellcheck="false">
+      </div>
+    </div>
+
+    <!-- SCROLLABLE AREA -->
+    <div class="scroll-area">
+
+      <!-- SEARCH PAGE CONTENT -->
+      <div class="search-page" id="searchPage">
+        <div class="search-sub">Instant Differentials — Type freely</div>
+        <div class="search-examples">(chest pain 45f sweating) &nbsp;&nbsp;(shortness of breath 60M)</div>
+        <div class="chip-row" id="chipRow"></div>
+      </div>
+
+      <!-- RESULTS PAGE CONTENT -->
+      <div class="results-page" id="resultsPage">
+        <div class="results-label" id="resultsLabel"></div>
+        <div id="resultsList"></div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+    <button class="tab-btn" id="tabCalc" onclick="openSheet('calc')">
+      <div class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/></svg></div>
+      <div class="tab-label">Calculators</div>
+    </button>
+    <button class="tab-btn" id="tabScores" onclick="openSheet('scores')">
+      <div class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
+      <div class="tab-label">Clinical Scores</div>
+    </button>
+    <button class="tab-btn" id="tabRef" onclick="openSheet('ref')">
+      <div class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
+      <div class="tab-label">References</div>
+    </button>
+  </div>
+
+</div>
+
+<!-- SHEET OVERLAY -->
+<div class="sheet-overlay" id="sheetOverlay" onclick="closeSheet()"></div>
+
+<!-- BOTTOM SHEET -->
+<div class="sheet" id="sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-hdr">
+    <div class="sheet-title" id="sheetTitle"></div>
+    <div class="sheet-sub" id="sheetSub"></div>
+  </div>
+  <div class="sheet-body" id="sheetBody"></div>
+</div>
+
+<!-- DRAWER OVERLAY -->
+<div class="overlay" id="overlay" onclick="closeDrawer()"></div>
+
+<!-- DRAWER -->
+<div class="drawer" id="drawer">
+  <div class="dr-pull"><div class="dr-handle"></div></div>
+  <div class="dr-topbar"><button class="dr-back" id="drBack">&#8249; Back</button></div>
+  <div class="dr-hdr">
+    <div class="dr-spec" id="drSpec"></div>
+    <div class="dr-title" id="drTitle"></div>
+    <div class="dr-blurb" id="drBlurb"></div>
+  </div>
+  <div class="dr-tabs" id="drTabs"></div>
+  <div class="dr-body" id="drBody"></div>
+</div>
+
+<script>
+// ── CONSTANTS ─────────────────────────────────────────────────
+var PREG = ["pregnant","pregnancy","prenatal","trimester","gravid","postpartum","peripartum","breastfeed","lactating","ob","obstetric"];
+var PEDS = ["child","children","infant","newborn","neonate","pediatric","peds","toddler","baby","kid","juvenile","adolescent","teen"];
+
+// ── CONDITION DATABASE ────────────────────────────────────────
+var DB = [
+  {id:"atypicalmi",danger:1,rel:["female","45","woman"],
+   name:"Atypical MI — Female Presentation",blurb:"Fatigue · Arm pain · 45F",spec:"Cardiology — Women's Health",
+   tags:"chest pain arm female woman 45 fatigue atypical exertion nausea jaw heart attack mi cardiac pressure diaphoresis",
+   tabs:[
+     {t:"Overview",b:"<div class='cb cb-red'><div class='cb-lbl'>🚨 Most Missed Diagnosis in Women</div><ul class='blist'><li>Women under 55 present atypically in over 40% of MI cases</li><li>Classic crushing chest pain is LESS common in women</li><li>Arm pain, fatigue, jaw pain, or nausea may be the ONLY symptoms</li><li>45F with chest and arm symptoms after exertion — rule out MI first</li></ul></div><div class='gl-tag'>📚 ACC/AHA ACS in Women Guidelines 2022</div>"},
+     {t:"Objective",b:"<div class='stitle'>Atypical Symptoms in Women</div><ul class='blist'><li>Unusual fatigue — may be the only complaint</li><li>Arm, jaw, or back pain without classic chest pressure</li><li>Nausea, vomiting, or indigestion</li><li>Shortness of breath without chest pain</li></ul><div class='stitle'>Workup</div><ul class='blist'><li><strong>ECG immediately</strong> — even if presentation seems musculoskeletal</li><li><strong>High-sensitivity troponin</strong> — baseline and repeat at 1-3h</li><li>BMP, CBC, CXR</li></ul>"},
+     {t:"Treatment",b:"<div class='refer-box'><div class='refer-title'>If ECG or Troponin Abnormal — 911 Immediately</div><p>Activate cath lab. Same protocol as classic MI. Do not manage in outpatient setting.</p></div><div class='stitle'>If Low Suspicion After Workup</div><ul class='blist'><li>Document ECG and troponin results</li><li>Clear return precautions — any worsening: go to ED</li><li>Follow up within 24-48 hours</li></ul>"},
+     {t:"Medications",b:"<div class='cb cb-red'><div class='cb-lbl'>If ACS Confirmed or Suspected</div><ul class='blist'><li>Aspirin 325mg PO chewed immediately</li><li>Call 911 — do not treat further in outpatient setting</li></ul></div>"},
+     {t:"Preg & Peds",b:"<div class='cb cb-amber'><div class='cb-lbl'>🤰 Pregnancy</div><ul class='blist'><li>Peripartum MI: rare but catastrophic — highest mortality</li><li>SCAD: most common cause of MI in pregnant women</li><li>Aspirin safe. Immediate cardiology and MFM consultation.</li></ul></div>"}
+   ]},
+  {id:"ami",danger:1,rel:[],
+   name:"Acute Myocardial Infarction",blurb:"Pressure · Diaphoresis · Radiation",spec:"Cardiology",
+   tags:"chest pain pressure sweating arm jaw diaphoresis nausea smoker diabetic elderly heart attack mi cardiac exertion radiation",
+   tabs:[
+     {t:"Overview",b:"<div class='cb cb-red'><div class='cb-lbl'>🚨 High Acuity — Act Immediately</div><ul class='blist'><li>Leading cause of sudden cardiac death in adults</li><li>STEMI: complete occlusion — door-to-balloon under 90 minutes</li><li>NSTEMI: partial occlusion — stabilize and urgent cath</li></ul></div><div class='gl-tag'>📚 ACC/AHA ACS Guidelines 2023</div>"},
+     {t:"Objective",b:"<div class='stitle'>Classic Symptoms</div><ul class='blist'><li>Substernal chest pressure — crushing or squeezing</li><li>Radiation to left arm, jaw, or neck</li><li>Diaphoresis, nausea, dyspnea</li></ul><div class='stitle'>Workup</div><ul class='blist'><li><strong>ECG within 10 minutes</strong></li><li><strong>High-sensitivity troponin</strong> — repeat at 1-3h</li><li>BMP, CBC, CXR</li></ul>"},
+     {t:"Treatment",b:"<div class='refer-box'><div class='refer-title'>Call 911 — Activate Cath Lab</div><p>STEMI: immediate transfer. IV thrombolytics: inpatient only.</p></div><div class='stitle'>Immediate Steps</div><ul class='blist'><li>Aspirin 325mg PO chewed immediately</li><li>O2 if SpO2 under 90%</li><li>Two large bore IVs, continuous monitoring</li></ul>"},
+     {t:"Medications",b:"<div class='rx-block'><div class='rx-title'>Antiplatelet</div><div class='rx-drug'>Aspirin 325mg</div><div class='rx-dose'>Chewed immediately</div></div><div class='rx-block'><div class='rx-title'>P2Y12 Inhibitor</div><div class='rx-drug'>Ticagrelor 180mg PO</div><div class='rx-dose'>Loading dose. Then 90mg BID.</div></div>"},
+     {t:"Preg & Peds",b:"<div class='cb cb-amber'><div class='cb-lbl'>🤰 Pregnancy</div><ul class='blist'><li>Highest maternal mortality of any cardiac event</li><li>Aspirin safe. Use clopidogrel instead of ticagrelor.</li></ul></div><div class='cb cb-indigo'><div class='cb-lbl'>👶 Pediatrics</div><ul class='blist'><li>Extremely rare without congenital anomaly</li><li>Consider anomalous coronary or Kawasaki disease</li></ul></div>"}
+   ]},
+  {id:"pe",danger:1,rel:[],
+   name:"Pulmonary Embolism",blurb:"Dyspnea · Pleuritic · Tachycardia",spec:"Pulmonary / Emergency",
+   tags:"chest pain shortness breath dyspnea leg swelling tachycardia pleuritic immobility surgery dvt hypoxia clot",
+   tabs:[
+     {t:"Overview",b:"<div class='cb cb-red'><div class='cb-lbl'>🚨 Assess Hemodynamics First</div><ul class='blist'><li>Massive PE: hypotension, shock — immediate thrombolysis</li><li>Submassive PE: RV strain without shock</li><li>Low-risk PE: hemodynamically stable</li></ul></div><div class='gl-tag'>📚 AHA PE Guidelines 2023</div>"},
+     {t:"Objective",b:"<div class='stitle'>Wells Score</div><ul class='blist'><li>Signs of DVT (+3)</li><li>PE most likely diagnosis (+3)</li><li>HR over 100 (+1.5)</li><li>Immobilization or recent surgery (+1.5)</li><li>Prior DVT or PE (+1.5)</li></ul>"},
+     {t:"Treatment",b:"<div class='refer-box'><div class='refer-title'>Hemodynamically Unstable — 911</div><p>Massive PE with shock: IV thrombolytics in ED only.</p></div><div class='stitle'>Stable PE</div><ul class='blist'><li>Anticoagulate immediately — high suspicion: do not wait for imaging</li><li>O2 to maintain SpO2 over 94%</li></ul>"},
+     {t:"Medications",b:"<div class='rx-block'><div class='rx-title'>First-Line DOAC</div><div class='rx-drug'>Rivaroxaban (Xarelto)</div><div class='rx-dose'>15mg PO BID x 21 days, then 20mg qday</div></div><div class='rx-block'><div class='rx-title'>Alternative</div><div class='rx-drug'>Apixaban (Eliquis)</div><div class='rx-dose'>10mg PO BID x 7 days, then 5mg BID</div></div>"},
+     {t:"Preg & Peds",b:"<div class='cb cb-amber'><div class='cb-lbl'>🤰 Pregnancy</div><ul class='blist'><li>LMWH throughout pregnancy — DOACs contraindicated</li><li>Enoxaparin 1mg/kg SQ BID — monitor anti-Xa</li></ul></div>"}
+   ]},
+  {id:"rotator",danger:0,rel:["arm","move","working","exercise","female","woman","lifting","gym"],
+   name:"Rotator Cuff Injury",blurb:"Arm movement · Overhead · Exertion",spec:"Orthopedics",
+   tags:"shoulder arm pain hard move movement lifting working out exercise female strain overhead muscle tear gym",
+   tabs:[
+     {t:"Overview",b:"<div class='cb cb-blue'><div class='cb-lbl'>Overview</div><ul class='blist'><li>Supraspinatus most commonly injured rotator cuff muscle</li><li>Acute: sudden injury during lifting or exertion</li><li>Chronic: repetitive overhead activity</li><li>Common in females 40-60 with active lifestyle</li></ul></div><div class='gl-tag'>📚 AAOS Rotator Cuff Guidelines 2019</div>"},
+     {t:"Objective",b:"<div class='stitle'>Exam Findings</div><ul class='blist'><li>Pain with active shoulder abduction — painful arc 60-120 degrees</li><li>Weakness on resisted external rotation</li><li><strong>Empty can test:</strong> pain with arm at 90 degrees</li><li>Tenderness over greater tuberosity</li></ul>"},
+     {t:"Treatment",b:"<div class='stitle'>Step 1 — Conservative</div><ul class='blist'><li>Rest from aggravating activity</li><li>Ice 20 min several times daily x 48-72h</li><li>NSAIDs x 2 weeks</li></ul><div class='refer-box'><div class='refer-title'>Refer Orthopedics</div><p>Full thickness tear on MRI. Failure of conservative therapy at 6-12 weeks.</p></div>"},
+     {t:"Medications",b:"<div class='rx-block'><div class='rx-title'>Anti-Inflammatory</div><div class='rx-drug'>Ibuprofen 400-600mg PO TID</div><div class='rx-dose'>With food x 2 weeks</div></div>"},
+     {t:"Preg & Peds",b:"<div class='cb cb-amber'><div class='cb-lbl'>🤰 Pregnancy</div><ul class='blist'><li>Ibuprofen: avoid after 20 weeks</li><li>Acetaminophen 500-1000mg PO QID instead</li></ul></div>"}
+   ]},
+  {id:"msk",danger:0,rel:["working","exercise","arm","chest","lifting","gym"],
+   name:"Musculoskeletal Strain",blurb:"Post-exertion · Chest wall · Arm",spec:"Primary Care / Urgent Care",
+   tags:"chest pain arm muscle strain working out exercise gym movement lifting female hard move soreness overuse wall",
+   tabs:[
+     {t:"Overview",b:"<div class='cb cb-blue'><div class='cb-lbl'>Overview</div><ul class='blist'><li>Most common cause of chest and arm pain after exercise</li><li>Involves intercostal muscles, pectoralis, or serratus anterior</li><li>Onset typically 12-48h after unaccustomed exertion</li><li>Always rule out cardiac cause first</li></ul></div><div class='gl-tag'>📚 ACSM Exercise Medicine Guidelines 2021</div>"},
+     {t:"Objective",b:"<div class='stitle'>Key Features</div><ul class='blist'><li>Pain onset after specific activity</li><li>Reproducible tenderness on palpation of chest wall</li><li>Pain worse with movement — better with rest</li><li>No radiation to jaw. No diaphoresis. No dyspnea.</li></ul>"},
+     {t:"Treatment",b:"<div class='stitle'>RICE Protocol</div><ul class='blist'><li>Rest from aggravating activity 48-72h</li><li>Ice 20 min several times daily first 48h</li><li>Heat after 48h. NSAIDs x 5-7 days.</li></ul>"},
+     {t:"Medications",b:"<div class='rx-block'><div class='rx-title'>First-Line</div><div class='rx-drug'>Ibuprofen 400-600mg PO TID</div><div class='rx-dose'>With food x 5-7 days</div></div>"},
+     {t:"Preg & Peds",b:"<div class='cb cb-amber'><div class='cb-lbl'>🤰 Pregnancy</div><ul class='blist'><li>Ibuprofen: avoid after 20 weeks</li><li>Acetaminophen: safe alternative throughout</li></ul></div>"}
+   ]},
+  {id:"costo",danger:0,rel:[],
+   name:"Costochondritis",blurb:"Reproducible · Sternal · Sharp",spec:"Primary Care / Urgent Care",
+   tags:"chest pain wall tender palpation reproducible sharp musculoskeletal pressing ribs working exercise sternal",
+   tabs:[
+     {t:"Overview",b:"<div class='cb cb-blue'><div class='cb-lbl'>Overview</div><ul class='blist'><li>Inflammation of costochondral junctions</li><li>Diagnosis: reproducible tenderness on palpation</li><li>Always rule out cardiac cause first in adults over 40</li></ul></div><div class='gl-tag'>📚 AAFP Chest Pain Guidelines 2021</div>"},
+     {t:"Objective",b:"<div class='stitle'>Key Finding</div><ul class='blist'><li><strong>Reproducible chest pain with palpation</strong> — hallmark</li><li>Sharp — worse with movement and deep breathing</li><li>No radiation to arm or jaw. No diaphoresis.</li></ul>"},
+     {t:"Treatment",b:"<div class='stitle'>Step 1 — NSAIDs</div><ul class='blist'><li>Ibuprofen 400-600mg PO TID with food x 1-2 weeks</li><li>Heat 15-20 min several times daily</li></ul>"},
+     {t:"Medications",b:"<div class='rx-block'><div class='rx-title'>First-Line</div><div class='rx-drug'>Ibuprofen 400-600mg PO TID</div><div class='rx-dose'>With food x 1-2 weeks</div></div>"},
+     {t:"Preg & Peds",b:"<div class='cb cb-amber'><div class='cb-lbl'>🤰 Pregnancy</div><ul class='blist'><li>Ibuprofen: avoid after 20 weeks</li><li>Acetaminophen 500-1000mg PO QID instead</li></ul></div>"}
+   ]},
+  {id:"panic",danger:0,rel:["female","woman","45"],
+   name:"Panic Disorder",blurb:"Palpitations · Anxiety · Female",spec:"Psychiatry",
+   tags:"chest pain palpitations anxiety fear racing heart shortness breath tingling dizziness female stress sweating panic woman",
+   tabs:[
+     {t:"Overview",b:"<div class='cb cb-blue'><div class='cb-lbl'>Diagnosis of Exclusion</div><ul class='blist'><li>Always rule out cardiac and pulmonary causes first</li><li>Panic attacks peak within 10 minutes</li><li>More common in women — peak onset age 20-40</li></ul></div><div class='gl-tag'>📚 DSM-5 / APA Practice Guidelines 2023</div>"},
+     {t:"Objective",b:"<div class='stitle'>4 or More Symptoms During Episode</div><ul class='blist'><li>Palpitations or racing heart</li><li>Sweating, trembling, shortness of breath</li><li>Chest pain, nausea, dizziness</li><li>Fear of losing control or dying</li></ul>"},
+     {t:"Treatment",b:"<div class='stitle'>Step 1 — Rule Out Organic</div><ul class='blist'><li>ECG, TSH, BMP, urine drug screen</li></ul><div class='stitle'>Step 2 — First-Line</div><ul class='blist'><li>CBT: most effective long-term</li><li>SSRI: first-line pharmacotherapy</li></ul>"},
+     {t:"Medications",b:"<div class='rx-block'><div class='rx-title'>First-Line SSRI</div><div class='rx-drug'>Sertraline 25-200mg PO qday</div><div class='rx-dose'>Start 25mg, titrate q1-2 weeks</div></div>"},
+     {t:"Preg & Peds",b:"<div class='cb cb-amber'><div class='cb-lbl'>🤰 Pregnancy</div><ul class='blist'><li>CBT: first-line in pregnancy</li><li>SSRIs: discuss risk-benefit — generally safe</li><li>Benzodiazepines: avoid</li></ul></div>"}
+   ]},
+  {id:"gerd",danger:0,rel:[],
+   name:"GERD / Esophageal Spasm",blurb:"Burning · After meals · Positional",spec:"Gastroenterology",
+   tags:"chest pain burning heartburn acid reflux eating food lying down regurgitation belching meals",
+   tabs:[
+     {t:"Overview",b:"<div class='cb cb-blue'><div class='cb-lbl'>Non-Cardiac Chest Pain</div><ul class='blist'><li>Always rule out cardiac cause first</li><li>GERD: burning, worse after meals and lying flat</li><li>Esophageal spasm: can mimic cardiac chest pain exactly</li></ul></div><div class='gl-tag'>📚 ACG GERD Guidelines 2022</div>"},
+     {t:"Objective",b:"<div class='stitle'>GERD Features</div><ul class='blist'><li>Burning substernal pain after meals</li><li>Worse lying down or bending forward</li><li>Regurgitation of acid or food. Relieved by antacids.</li></ul>"},
+     {t:"Treatment",b:"<div class='stitle'>Step 1 — Lifestyle</div><ul class='blist'><li>Avoid triggers: caffeine, alcohol, spicy, fatty foods</li><li>Elevate head of bed 30 degrees</li></ul><div class='stitle'>Step 2 — PPI</div><ul class='blist'><li>Omeprazole 20mg PO qday before breakfast x 8 weeks</li></ul>"},
+     {t:"Medications",b:"<div class='rx-block'><div class='rx-title'>First-Line PPI</div><div class='rx-drug'>Omeprazole 20mg PO qday</div><div class='rx-dose'>Before breakfast x 8 weeks</div></div>"},
+     {t:"Preg & Peds",b:"<div class='cb cb-amber'><div class='cb-lbl'>🤰 Pregnancy</div><ul class='blist'><li>Very common in pregnancy</li><li>First-line: dietary modification, antacids</li><li>Omeprazole Category C — use if lifestyle fails</li></ul></div>"}
+   ]}
+];
+
+// ── SHEET DATA ────────────────────────────────────────────────
+var SHEETS = {
+  calc:{
+    title:"Calculators",
+    sub:"Clinical calculation tools",
+    items:[
+      {name:"GFR Calculator",desc:"CKD-EPI and Cockcroft-Gault equations"},
+      {name:"Pediatric Dosing",desc:"Weight-based medication dosing"},
+      {name:"Vancomycin AUC/MIC",desc:"Vancomycin dosing and monitoring"},
+      {name:"BMI Calculator",desc:"Body mass index with interpretation"},
+      {name:"Corrected Calcium",desc:"Albumin-corrected serum calcium"},
+      {name:"Anion Gap",desc:"With and without albumin correction"},
+      {name:"Creatinine Clearance",desc:"Cockcroft-Gault formula"},
+      {name:"IV Fluid Rate",desc:"Maintenance fluid calculations"}
+    ]
+  },
+  scores:{
+    title:"Clinical Scores",
+    sub:"Validated clinical decision tools",
+    items:[
+      {name:"NIH Stroke Scale",desc:"Neurological deficit scoring"},
+      {name:"Glasgow Coma Scale",desc:"Level of consciousness assessment"},
+      {name:"Ottawa Ankle Rules",desc:"Ankle and foot fracture criteria"},
+      {name:"Ottawa Knee Rules",desc:"Knee fracture criteria"},
+      {name:"CURB-65",desc:"Community-acquired pneumonia severity"},
+      {name:"Wells Score — DVT",desc:"Deep vein thrombosis probability"},
+      {name:"Wells Score — PE",desc:"Pulmonary embolism probability"},
+      {name:"HEART Score",desc:"Chest pain risk stratification"},
+      {name:"PECARN",desc:"Pediatric head CT decision rule"},
+      {name:"Centor Score",desc:"Strep pharyngitis probability"}
+    ]
+  },
+  ref:{
+    title:"References",
+    sub:"Clinical reference charts and guides",
+    items:[
+      {name:"Burn Chart — Rule of Nines",desc:"Body surface area estimation"},
+      {name:"Rash Identification Guide",desc:"Common dermatologic patterns"},
+      {name:"Immunization Schedule",desc:"CDC adult and pediatric schedules"},
+      {name:"Antibiotic Reference",desc:"Common regimens by infection type"},
+      {name:"Normal Lab Values",desc:"Reference ranges for common labs"},
+      {name:"ECG Interpretation Guide",desc:"Rhythm and interval reference"},
+      {name:"Dermatome Map",desc:"Sensory and motor nerve distributions"},
+      {name:"Glasgow Pupil Scale",desc:"Pupillary response grading"}
+    ]
+  }
+};
+
+// ── SEARCH ENGINE ─────────────────────────────────────────────
+var curQuery = "";
+
+function scoreIt(cond, words) {
+  var s = 0;
+  var tags = cond.tags;
+  var name = cond.name.toLowerCase();
+  for (var i = 0; i < words.length; i++) {
+    var w = words[i];
+    if (name.indexOf(w) >= 0) s += 10;
+    var tagArr = tags.split(" ");
+    for (var j = 0; j < tagArr.length; j++) {
+      if (tagArr[j] === w) s += 5;
+      else if (tagArr[j].indexOf(w) >= 0) s += 2;
+    }
+  }
+  return s;
+}
+
+function isRel(cond, words) {
+  if (cond.danger) return false;
+  for (var i = 0; i < cond.rel.length; i++) {
+    for (var j = 0; j < words.length; j++) {
+      if (words[j].indexOf(cond.rel[i]) >= 0 || cond.rel[i].indexOf(words[j]) >= 0) return true;
+    }
+  }
+  return false;
+}
+
+function doSearch(q) {
+  curQuery = q;
+  var cb = document.getElementById("clearBtn");
+  cb.className = q.length > 0 ? "clear-btn show" : "clear-btn";
+
+  if (!q || q.trim().length < 2) {
+    showSearchPage();
+    updateChips([]);
+    return;
+  }
+
+  var words = q.toLowerCase().replace(/[^a-z0-9 ]/g," ").split(/\s+/).filter(function(w){return w.length>1;});
+  if (words.length === 0) { showSearchPage(); return; }
+
+  updateChips(words);
+
+  var results = [];
+  for (var i = 0; i < DB.length; i++) {
+    var s = scoreIt(DB[i], words);
+    if (s > 0) results.push({c:DB[i],s:s,r:isRel(DB[i],words)});
+  }
+
+  results.sort(function(a,b){
+    // High Risk only floats to top if score >= 8 (meaningful keyword match)
+    var aD = a.c.danger && a.s >= 8;
+    var bD = b.c.danger && b.s >= 8;
+    if (aD && !bD) return -1;
+    if (!aD && bD) return 1;
+    if (aD && bD) return b.s - a.s;
+    if (a.r && !b.r) return -1;
+    if (!a.r && b.r) return 1;
+    return b.s - a.s;
+  });
+
+  showResultsPage(results);
+}
+
+function updateChips(words) {
+  var row = document.getElementById("chipRow");
+  if (!words || words.length === 0) {
+    row.innerHTML = "";
+    row.className = "chip-row";
+    return;
+  }
+  var html = "";
+  for (var i = 0; i < words.length; i++) {
+    html += "<div class='chip' data-word='"+words[i]+"'>"+words[i]+"<span class='chip-x'>&#x2715;</span></div>";
+  }
+  row.innerHTML = html;
+  row.className = "chip-row show";
+  var chips = row.querySelectorAll(".chip");
+  for (var j = 0; j < chips.length; j++) {
+    chips[j].addEventListener("click", function(){
+      var word = this.getAttribute("data-word");
+      var inp = document.getElementById("searchBox");
+      var parts = inp.value.split(/\s+/).filter(function(w){return w.toLowerCase()!==word;});
+      inp.value = parts.join(" ");
+      doSearch(inp.value);
+    });
+  }
+}
+
+function showSearchPage() {
+  document.getElementById("searchPage").style.display = "flex";
+  document.getElementById("resultsPage").className = "results-page";
+  document.querySelector(".scroll-area").scrollTop = 0;
+}
+
+function showResultsPage(results) {
+  document.getElementById("searchPage").style.display = "none";
+  document.getElementById("resultsPage").className = "results-page show";
+  document.querySelector(".scroll-area").scrollTop = 0;
+
+  var label = document.getElementById("resultsLabel");
+  var list = document.getElementById("resultsList");
+
+  if (results.length === 0) {
+    label.textContent = "NO RESULTS — TRY DIFFERENT TERMS";
+    list.innerHTML = "";
+    return;
+  }
+
+  label.textContent = results.length + " DIFFERENTIAL" + (results.length!==1?"S":"") + " — TAP TO OPEN";
+
+  var html = "";
+  for (var i = 0; i < results.length; i++) {
+    var item = results[i];
+    var c = item.c;
+    var cls = "card";
+    var badge = "";
+    if (c.danger) { cls+=" hi-risk"; badge="<div class='badge badge-red'>High Risk</div>"; }
+    else if (item.r) { cls+=" hi-rel"; badge="<div class='badge badge-purple'>High Relevance</div>"; }
+    html += "<div class='"+cls+"' data-id='"+c.id+"' ontouchstart=''>";
+    html += "<div class='dot'></div>";
+    html += "<div class='card-body'><div class='card-name'>"+c.name+"</div><div class='card-blurb'>"+c.blurb+"</div></div>";
+    if (badge) html += badge;
+    html += "<div class='card-arr'><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.5'><path d='m9 18 6-6-6-6'/></svg></div>";
+    html += "</div>";
+  }
+  list.innerHTML = html;
+
+  var cards = list.querySelectorAll(".card");
+  for (var j = 0; j < cards.length; j++) {
+    cards[j].addEventListener("click", function(){openCard(this.getAttribute("data-id"));});
+  }
+}
+
+// ── DRAWER ────────────────────────────────────────────────────
+function isPregQuery() {
+  var words = curQuery.toLowerCase().split(/\s+/);
+  for (var i = 0; i < words.length; i++) {
+    var w = words[i];
+    for (var j = 0; j < PREG.length; j++) { if (w.indexOf(PREG[j])>=0||PREG[j].indexOf(w)>=0) return true; }
+    for (var k = 0; k < PEDS.length; k++) { if (w.indexOf(PEDS[k])>=0||PEDS[k].indexOf(w)>=0) return true; }
+  }
+  return false;
+}
+
+function openCard(id) {
+  var cond = null;
+  for (var i = 0; i < DB.length; i++) { if (DB[i].id===id){cond=DB[i];break;} }
+  if (!cond) return;
+  document.getElementById("drSpec").textContent = cond.spec;
+  document.getElementById("drTitle").textContent = cond.name;
+  document.getElementById("drBlurb").textContent = cond.blurb;
+  var alert = isPregQuery();
+  var tabsEl = document.getElementById("drTabs");
+  tabsEl.innerHTML = "";
+  cond.tabs.forEach(function(tab,i){
+    var btn = document.createElement("button");
+    var isPreg = tab.t==="Preg & Peds";
+    btn.className = "tab"+(i===0?" on":"")+(isPreg&&alert?" preg-glow":"");
+    btn.textContent = isPreg&&alert?("⚠ "+tab.t):tab.t;
+    (function(t,b){
+      b.addEventListener("click",function(){
+        tabsEl.querySelectorAll(".tab").forEach(function(x){x.classList.remove("on");});
+        b.classList.add("on");
+        document.getElementById("drBody").innerHTML=t.b;
+        document.getElementById("drBody").scrollTop=0;
+      });
+    })(tab,btn);
+    tabsEl.appendChild(btn);
+  });
+  document.getElementById("drBody").innerHTML = cond.tabs[0].b;
+  document.getElementById("drBody").scrollTop = 0;
+  document.getElementById("overlay").classList.add("open");
+  document.getElementById("drawer").classList.add("open");
+}
+
+function closeDrawer() {
+  document.getElementById("overlay").classList.remove("open");
+  document.getElementById("drawer").classList.remove("open");
+}
+
+// ── BOTTOM SHEET ──────────────────────────────────────────────
+function openSheet(key) {
+  var data = SHEETS[key];
+  if (!data) return;
+  document.getElementById("sheetTitle").textContent = data.title;
+  document.getElementById("sheetSub").textContent = data.sub;
+  var html = "";
+  for (var i = 0; i < data.items.length; i++) {
+    var item = data.items[i];
+    html += "<div class='sheet-item'>";
+    html += "<div><div class='sheet-item-name'>"+item.name+"</div><div class='sheet-item-desc'>"+item.desc+"</div></div>";
+    html += "<div class='sheet-coming'>Coming Soon</div>";
+    html += "</div>";
+  }
+  document.getElementById("sheetBody").innerHTML = html;
+  document.getElementById("sheetOverlay").classList.add("open");
+  document.getElementById("sheet").classList.add("open");
+}
+
+function closeSheet() {
+  document.getElementById("sheetOverlay").classList.remove("open");
+  document.getElementById("sheet").classList.remove("open");
+}
+
+// ── INIT ──────────────────────────────────────────────────────
+document.getElementById("searchBox").addEventListener("input", function(){ doSearch(this.value); });
+
+document.getElementById("clearBtn").addEventListener("click", function(){
+  document.getElementById("searchBox").value = "";
+  doSearch("");
+  document.getElementById("searchBox").focus();
+});
+
+document.getElementById("overlay").addEventListener("click", closeDrawer);
+document.getElementById("drBack").addEventListener("click", closeDrawer);
+
+// Example searches are display only — no click handlers needed
+</script>
+</body>
+</html>
